@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'demo_list.dart';
+import 'todo_list.dart';
 
-void main() => runApp(new MyApp());
+void main() => runApp(new ToDoApp());
 
-class MyApp extends StatelessWidget {
+class ToDoApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      title: 'Flutter Demo 1',
+      title: 'ToDo-List',
       theme: new ThemeData(
         // This is the theme of your application.
         //
@@ -20,13 +20,13 @@ class MyApp extends StatelessWidget {
         // counter didn't reset back to zero; the application is not restarted.
         primarySwatch: Colors.amber,
       ),
-      home: new MyHomePage(title: 'Flutter Demo 2'),
+      home: new HomePage(title: 'Todo-List'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+class HomePage extends StatefulWidget {
+  HomePage({Key key, this.title}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -39,21 +39,28 @@ class MyHomePage extends StatefulWidget {
 
   final String title;
 
+  final todoDatas = <ToDoBean>[];
+
   @override
-  _MyHomePageState createState() => new _MyHomePageState();
+  _HomePageState createState() => new _HomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _HomePageState extends State<HomePage> {
 
   void _incrementCounter() {
+
+    ToDoBean toDoBean = ToDoBean();
+    toDoBean.title = "dfdsfsfds";
+    toDoBean.hasDone = true;
+
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
       // so that the display can reflect the updated values. If we changed
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
-      _counter++;
+      widget.todoDatas.add(toDoBean);
+      
     });
   }
 
@@ -74,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: new Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        child: new DemoListView(),
+        child: new ToDoListView( todoDatas: widget.todoDatas),
 //        child: new Column(
 //          // Column is also layout widget. It takes a list of children and
 //          // arranges them vertically. By default, it sizes itself to fit its
