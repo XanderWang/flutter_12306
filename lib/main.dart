@@ -8,7 +8,7 @@ class ToDoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      title: 'ToDo-List',
+      title: 'My ToDo',
       theme: new ThemeData(
         // This is the theme of your application.
         //
@@ -20,7 +20,7 @@ class ToDoApp extends StatelessWidget {
         // counter didn't reset back to zero; the application is not restarted.
         primarySwatch: Colors.amber,
       ),
-      home: new HomePage(title: 'Todo-List'),
+      home: new HomePage(title: 'My Todo'),
     );
   }
 }
@@ -46,12 +46,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
-  void _incrementCounter() {
-
+  void _insertTestData() {
     ToDoBean toDoBean = ToDoBean();
-    toDoBean.title = "dfdsfsfds";
-    toDoBean.hasDone = true;
+    toDoBean.title = "test data";
+    toDoBean.hasDone = false;
 
     setState(() {
       // This call to setState tells the Flutter framework that something has
@@ -60,14 +58,13 @@ class _HomePageState extends State<HomePage> {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
       widget.todoDatas.add(toDoBean);
-      
     });
   }
 
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
+    // by the _insertTestData method above.
     //
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
@@ -81,7 +78,7 @@ class _HomePageState extends State<HomePage> {
       body: new Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        child: new ToDoListView( todoDatas: widget.todoDatas),
+        child: new ToDoListView(todoDatas: widget.todoDatas),
 //        child: new Column(
 //          // Column is also layout widget. It takes a list of children and
 //          // arranges them vertically. By default, it sizes itself to fit its
@@ -109,8 +106,8 @@ class _HomePageState extends State<HomePage> {
 //        ),
       ),
       floatingActionButton: new FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
+        onPressed: _insertTestData,
+        tooltip: 'AddData',
         child: new Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
