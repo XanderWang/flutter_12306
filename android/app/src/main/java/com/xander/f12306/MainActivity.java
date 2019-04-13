@@ -1,4 +1,4 @@
-package com.example.helloflutter;
+package com.xander.f12306;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;

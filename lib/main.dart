@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'todo_list.dart';
+import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 
 void main() => runApp(new ToDoApp());
 
@@ -46,7 +48,26 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  void getNet_3() async {
+    var url = 'https://wanandroid.com/wxarticle/chapters/json';
+    Dio dio = new Dio();
+    var response = await dio.get(url);
+    print("getNet_3 $response.data.toString()");
+  }
+
+  void _testNetwork() {
+    print("==============================_test_network=====================================");
+    var url = 'https://wanandroid.com/wxarticle/chapters/json';
+    http.Client().get(url).then((http.Response response) {
+      print('Response=$response');
+    });
+  }
+
   void _insertTestData() {
+    _testNetwork();
+    getNet_3();
+
     ToDoBean toDoBean = ToDoBean();
     toDoBean.title = "test data";
     toDoBean.hasDone = false;
