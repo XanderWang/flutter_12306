@@ -12,8 +12,17 @@ void main() {
   print(TestA.empty());
   print(TestA.forX(33));
   print(TestA.forY());
-
+  outter(print_msg);
   getNet_3();
+}
+
+outter(inner(String inner_msg)) {
+  print("now in outter");
+  inner("I am value in out.");
+}
+
+print_msg(String msg) {
+  print("in print msg method, $msg");
 }
 
 void getNet_3() async {
