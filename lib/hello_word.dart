@@ -1,19 +1,23 @@
 import 'package:dio/dio.dart';
 
+import 'urls.dart';
+
 /**
  * 配合安装 dart sdk , 方便调试
  * dart sdk 可以在 flutter\bin\cache\dart-sdk\bin 下面找到
  */
 
 void main() {
-  print("hello flutter");
-  print("你好啊");
-  print(new TestA(1, 2));
-  print(TestA.empty());
-  print(TestA.forX(33));
-  print(TestA.forY());
-  outter(print_msg);
-  getNet_3();
+  // print("hello flutter");
+  // print("你好啊");
+  // print(new TestA(1, 2));
+  // print(TestA.empty());
+  // print(TestA.forX(33));
+  // print(TestA.forY());
+  // outter(print_msg);
+  // getNet_3();
+
+  print(urls['auth']['Referer']);
 }
 
 outter(inner(String inner_msg)) {
