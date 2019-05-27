@@ -28,8 +28,9 @@ void _login() {
   HttpUtils.request(loginConfig);
 }
 
-void _loginConf() {
+void _loginConf() async {
   var urlConfig = urls['loginConf'];
   print("urlConfig:$urlConfig");
-  HttpUtils.request(urlConfig);
+  var result = await HttpUtils.request(urlConfig);
+  print("login config result:${result.toString()}");
 }

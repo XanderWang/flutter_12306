@@ -1,12 +1,24 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 
-void request(Map<String, Object> urlConfig, {dynamic data = null}) async {
-  var log = urlConfig['is_logger'] ?? true;
+class ErrorMsg {
+  var success = false;
+  var msg = "";
+  ErrorMsg.init(this.msg);
+
+  @override
+  String toString() {
+    return "{success:$success,msg:$msg}";
+  }
+}
+
+Future<dynamic> request(Map<String, Object> urlConfig,
+    {dynamic data = null}) async {
+  var openLog = urlConfig['is_logger'] ?? true;
 
   /// Http method.
-  String _method = urlConfig['req_type'] ?? "get";
-  _method = _method.toLowerCase();
+  String _method = urlConfig['req_type'] ?? "GET";
+  _method = _method.toUpperCase();
 
   /// 路径
   String _url = urlConfig['req_url'] ?? "";
@@ -14,13 +26,13 @@ void request(Map<String, Object> urlConfig, {dynamic data = null}) async {
   /// 请求基地址,可以包含子路径，如: "https://www.google.com/api/".
   String _baseUrl = urlConfig['Host'] ?? "";
   String _path = "https://$_baseUrl$_url";
-  if (log) print("path is $_path");
+  if (openLog) print("path is $_path");
 
   /// Http请求头.
-  Map<String, dynamic> _headers = _createDefaultHeaders();
-  _headers.update("Referer", urlConfig["Referer"] ?? "");
+  Map<String, String> _headers = _createDefaultHeaders();
+  _headers["Referer"] = urlConfig["Referer"] ?? "";
   // if( _method == "post" ) {
-  //   _headers.update("Content-Length", "$data");
+  //   _headers.["Content-Length"] = "$data";
   // }
 
   /// 连接服务器超时时间，单位是毫秒.
@@ -59,19 +71,31 @@ void request(Map<String, Object> urlConfig, {dynamic data = null}) async {
     contentType: _contentType,
     responseType: _responseType,
   );
-  // options.baseUrl
+
   try {
     Dio dio = Dio();
+    // dio.get(path)
     _addInterceptor(dio);
+    // dio.request(_path, data: _data, options: _options).then((response) {
+    //   print("${response.data}");
+    // });
+    // Future<Response> response = dio.request(_path, data: _data, options: _options);
     Response response =
         await dio.request(_path, data: _data, options: _options);
-    if (log) print(response);
+    if (response.statusCode == 200 || response.statusCode == 303) {
+      //   return response.data;
+    } else {
+      response.data = ErrorMsg.init(response.statusMessage);
+    }
+    print("${response.toString()}");
+    return Future.value(response);
   } catch (e) {
     print(e);
+    return Future.value(e);
   }
 }
 
-Map<String, dynamic> _createDefaultHeaders() {
+Map<String, String> _createDefaultHeaders() {
   return {
     "Accept-Encoding": "gzip, deflate",
     "User-Agent":
@@ -84,10 +108,12 @@ Map<String, dynamic> _createDefaultHeaders() {
 
 void _addInterceptor(Dio dio) {
   dio.interceptors.add(InterceptorsWrapper(onRequest: (RequestOptions options) {
-    print("in requset interceptors RequestOptions headers:${options}");
+    print(
+        "in requset interceptors RequestOptions headers:${options.toString()}");
     return options;
   }, onResponse: (Response response) {
-    print("in response interceptors:${response.data}");
+    // response.statusCode = 404;
+    print("in response interceptors:${response.toString()}");
     return response;
   }, onError: (DioError error) {
     print("in requset interceptors:$error");
