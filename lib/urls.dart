@@ -1,15 +1,16 @@
-
-Map<String,dynamic> createUrlConfigMap(String key) {
-  Map<String,dynamic> configMap = new Map();
+/// 获取某个网络配置
+Map<String, dynamic> getUrlConfigMap(String key) {
+  Map<String, dynamic> configMap = new Map();
   var _configMap = _urls[key];
-  if( _configMap is Map ) {
-    _configMap.forEach(( _key,_value )  {
+  if (_configMap is Map) {
+    _configMap.forEach((_key, _value) {
       configMap[_key] = _value;
     });
   }
   return configMap;
 }
 
+/// 网络配置
 const _urls = {
   "auth": {
     // 登录接口

@@ -1,14 +1,38 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 
-class ErrorMsg {
+class DataResponse {
+  /// 请求结果， true 表示请求到结果
   var success = false;
+
+  /// 结果编码 0 表示没有异常，其他表示有异常
+  int code = 0;
+
+  /// 请求结果异常的时候，错误提示
   var msg = "";
-  ErrorMsg.init(this.msg);
+
+  /// 网络请求结果
+  dynamic data;
+
+  DataResponse(this.success, this.msg, this.data);
+
+  DataResponse.error(int code, String msg) {
+    this.success = false;
+    this.code = code;
+    this.msg = msg;
+    this.data = null;
+  }
+
+  DataResponse.data(dynamic data) {
+    this.success = true;
+    this.code = 0;
+    this.msg = "";
+    this.data = data;
+  }
 
   @override
   String toString() {
-    return "{success:$success,msg:$msg}";
+    return "{success:$success,msg:$msg,code:$code,data:$data}";
   }
 }
 
@@ -74,29 +98,17 @@ Future<dynamic> request(Map<String, Object> urlConfig,
 
   try {
     Dio dio = Dio();
-    // dio.get(path)
     _addInterceptor(dio);
-    // dio.request(_path, data: _data, options: _options).then((response) {
-    //   print("====data is:${response.data}");
-    // });
-
-    if (openLog) print("===http 1 request path is $_path");
     Response response =
         await dio.request(_path, data: _data, options: _options);
-    if (openLog) print("===http 2 request path is $_path");    
     if (response.statusCode == 200 || response.statusCode == 303) {
-      //   return response.data;
+      return DataResponse.data(response.data);
     } else {
-      response.data = ErrorMsg.init(response.statusMessage);
+      return DataResponse.error(10, "error message:${response.statusMessage}");
     }
-    print("===await data is:${response.toString()}");
-    return response;
-    // print("===http request a msg");
-    // return Future.value("I am a msg!!!");
-    // return "I am a msg!!!";
-  } catch (e) {
+  } on DioError catch (e) {
     print(e);
-    return e;
+    return DataResponse.error(10, "error message:${e.message}");
   }
 }
 
