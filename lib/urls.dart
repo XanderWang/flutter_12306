@@ -1,4 +1,16 @@
-const urls = {
+
+Map<String,dynamic> createUrlConfigMap(String key) {
+  Map<String,dynamic> configMap = new Map();
+  var _configMap = _urls[key];
+  if( _configMap is Map ) {
+    _configMap.forEach(( _key,_value )  {
+      configMap[_key] = _value;
+    });
+  }
+  return configMap;
+}
+
+const _urls = {
   "auth": {
     // 登录接口
     "req_url": "/passport/web/auth/uamtk",

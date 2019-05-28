@@ -26,7 +26,7 @@ Future<dynamic> request(Map<String, Object> urlConfig,
   /// 请求基地址,可以包含子路径，如: "https://www.google.com/api/".
   String _baseUrl = urlConfig['Host'] ?? "";
   String _path = "https://$_baseUrl$_url";
-  if (openLog) print("path is $_path");
+  // if (openLog) print("http request path is $_path");
 
   /// Http请求头.
   Map<String, String> _headers = _createDefaultHeaders();
@@ -44,7 +44,7 @@ Future<dynamic> request(Map<String, Object> urlConfig,
   int _receiveTimeout = 3000;
 
   /// 请求数据,可以是任意类型.
-  var _data = data;
+  var _data = data ?? {};
 
   /// 请求的Content-Type，默认值是[ContentType.JSON].
   /// 如果您想以"application/x-www-form-urlencoded"格式编码请求数据,
@@ -77,21 +77,26 @@ Future<dynamic> request(Map<String, Object> urlConfig,
     // dio.get(path)
     _addInterceptor(dio);
     // dio.request(_path, data: _data, options: _options).then((response) {
-    //   print("${response.data}");
+    //   print("====data is:${response.data}");
     // });
-    // Future<Response> response = dio.request(_path, data: _data, options: _options);
+
+    if (openLog) print("===http 1 request path is $_path");
     Response response =
         await dio.request(_path, data: _data, options: _options);
+    if (openLog) print("===http 2 request path is $_path");    
     if (response.statusCode == 200 || response.statusCode == 303) {
       //   return response.data;
     } else {
       response.data = ErrorMsg.init(response.statusMessage);
     }
-    print("${response.toString()}");
-    return Future.value(response);
+    print("===await data is:${response.toString()}");
+    return response;
+    // print("===http request a msg");
+    // return Future.value("I am a msg!!!");
+    // return "I am a msg!!!";
   } catch (e) {
     print(e);
-    return Future.value(e);
+    return e;
   }
 }
 
@@ -108,8 +113,7 @@ Map<String, String> _createDefaultHeaders() {
 
 void _addInterceptor(Dio dio) {
   dio.interceptors.add(InterceptorsWrapper(onRequest: (RequestOptions options) {
-    print(
-        "in requset interceptors RequestOptions headers:${options.toString()}");
+    _printRequestOptions(options);
     return options;
   }, onResponse: (Response response) {
     // response.statusCode = 404;
@@ -119,4 +123,9 @@ void _addInterceptor(Dio dio) {
     print("in requset interceptors:$error");
     return error;
   }));
+}
+
+void _printRequestOptions(RequestOptions options) {
+  // print("RequestOptions ${options.path},${options.cookies},${options.headers}");
+  print("RequestOptions ${options.path}");
 }

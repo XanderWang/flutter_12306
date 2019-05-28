@@ -17,7 +17,6 @@ void main() {
   // outter(print_msg);
   // getNet_3();
 
-  print(urls['auth']['Referer']);
 }
 
 outter(inner(String inner_msg)) {
