@@ -36,8 +36,8 @@ class DataResponse {
   }
 }
 
-Future<dynamic> request(Map<String, Object> urlConfig,
-    {dynamic data = null}) async {
+Future<DataResponse> request(Map<String, Object> urlConfig,
+    {dynamic data }) async {
   var openLog = urlConfig['is_logger'] ?? true;
 
   /// Http method.
@@ -101,14 +101,15 @@ Future<dynamic> request(Map<String, Object> urlConfig,
     _addInterceptor(dio);
     Response response =
         await dio.request(_path, data: _data, options: _options);
+    print(response);
     if (response.statusCode == 200 || response.statusCode == 303) {
       return DataResponse.data(response.data);
     } else {
-      return DataResponse.error(10, "error message:${response.statusMessage}");
+      return DataResponse.error(10, "${response.statusMessage}");
     }
   } on DioError catch (e) {
     print(e);
-    return DataResponse.error(10, "error message:${e.message}");
+    return DataResponse.error(10, "${e.message}");
   }
 }
 

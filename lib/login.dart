@@ -2,12 +2,17 @@ import 'package:dio/dio.dart';
 import 'http.dart' as HttpUtils;
 import 'urls.dart' as UrlUtils;
 
-void main(List<String> args) {
+void main(List<String> args) async{
   print("main start =================");
-  // print("args:$args");
-  // _captcha_code();
-  // _login();
-  _loginConf();
+  /// 先判断是否需要验证码
+  var needPassCode = await needLoginPassCode();
+  if( needPassCode ) {
+    /// loginInitCdn1  cnd
+    var loginInitCdn1 = UrlUtils.getUrlConfigMap('loginInitCdn1');
+    /// uamtk-static
+    var uamtk_static = UrlUtils.getUrlConfigMap('uamtk-static');
+    // var list = Future.wait(HttpUtils.request(loginInitCdn1));
+  }
   print("main end =================");
 }
 
@@ -30,12 +35,16 @@ void _login() {
   HttpUtils.request(loginConfig);
 }
 
-void _loginConf() async {
+/// 是否需要验证吗
+Future<bool> needLoginPassCode() async {
   var urlConfig = UrlUtils.getUrlConfigMap('loginConf');
   print("_loginConf urlConfig:$urlConfig");
-
-  /// 没碰到一次 await , await 下面的代码就会被放到 Future 的 then 里面调用
+  /// 每碰到一次 await , await 下面的代码就会被放到 Future 的 then 里面调用
   /// 这样，代码执行是异步执行的，但是代码逻辑上是同步的
   var result = await HttpUtils.request(urlConfig);
-  print("_loginConf result:${result.toString()} \n");
+  print("_loginConf result:${result.data} \n");
+  if( result.success && result.data['is_login_passCode'] == "N" ) {
+    return false;
+  }
+  return true;
 }
