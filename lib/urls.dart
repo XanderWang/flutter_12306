@@ -28,7 +28,7 @@ const _urls = {
   "uamtk-static": {
     // 登录接口
     "req_url": "/passport/web/auth/uamtk-static",
-    "req_type": "get",
+    "req_type": "post",
     "Referer": "https://kyfw.12306.cn/otn/resources/login.html",
     "Host": "kyfw.12306.cn",
     "Content-Type": 1,

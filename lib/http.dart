@@ -37,12 +37,14 @@ class DataResponse {
 }
 
 Future<DataResponse> request(Map<String, Object> urlConfig,
-    {dynamic data }) async {
-  var openLog = urlConfig['is_logger'] ?? true;
+    {Map<String, dynamic> data}) async {
+  var useLog = urlConfig['is_logger'] ?? true;
+  useLog = true;
 
   /// Http method.
   String _method = urlConfig['req_type'] ?? "GET";
   _method = _method.toUpperCase();
+  if (useLog) print("http request method:$_method");
 
   /// 路径
   String _url = urlConfig['req_url'] ?? "";
@@ -50,7 +52,7 @@ Future<DataResponse> request(Map<String, Object> urlConfig,
   /// 请求基地址,可以包含子路径，如: "https://www.google.com/api/".
   String _baseUrl = urlConfig['Host'] ?? "";
   String _path = "https://$_baseUrl$_url";
-  // if (openLog) print("http request path is $_path");
+  if (useLog) print("http request path:$_path");
 
   /// Http请求头.
   Map<String, String> _headers = _createDefaultHeaders();
@@ -69,6 +71,7 @@ Future<DataResponse> request(Map<String, Object> urlConfig,
 
   /// 请求数据,可以是任意类型.
   var _data = data ?? {};
+  if (useLog) print("http request data:$_data");
 
   /// 请求的Content-Type，默认值是[ContentType.JSON].
   /// 如果您想以"application/x-www-form-urlencoded"格式编码请求数据,
@@ -101,8 +104,11 @@ Future<DataResponse> request(Map<String, Object> urlConfig,
     _addInterceptor(dio);
     Response response =
         await dio.request(_path, data: _data, options: _options);
-    print(response);
+    // print(response);
     if (response.statusCode == 200 || response.statusCode == 303) {
+      if (useLog && isJson) {
+        print("http request response.data:${response.data}");
+      }
       return DataResponse.data(response.data);
     } else {
       return DataResponse.error(10, "${response.statusMessage}");
@@ -124,16 +130,16 @@ Map<String, String> _createDefaultHeaders() {
   };
 }
 
-void _addInterceptor(Dio dio) {
+void _addInterceptor(Dio dio, {bool useLog = false}) {
   dio.interceptors.add(InterceptorsWrapper(onRequest: (RequestOptions options) {
-    _printRequestOptions(options);
+    if (useLog) _printRequestOptions(options);
     return options;
   }, onResponse: (Response response) {
     // response.statusCode = 404;
-    print("in response interceptors:${response.toString()}");
+    if (useLog) print("in response interceptors:${response.toString()}");
     return response;
   }, onError: (DioError error) {
-    print("in requset interceptors:$error");
+    if (useLog) print("in requset interceptors:$error");
     return error;
   }));
 }
