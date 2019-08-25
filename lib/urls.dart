@@ -82,7 +82,7 @@ const _urls = {
   "getCodeImg1": {
     // 登录验证码
     "req_url":
-        "/passport/captcha/captcha-image64?login_site=E&module=login&rand=sjrand&{0}&callback=jQuery19108016482864806321_1554298927290&_=1554298927293",
+        "/passport/captcha/captcha-image64?login_site=E&module=login&rand=sjrand&%s&callback=jQuery19108016482864806321_%s&_=%s",
     "req_type": "get",
     "Referer": "https://kyfw.12306.cn/otn/resources/login.html",
     "Host": "kyfw.12306.cn",

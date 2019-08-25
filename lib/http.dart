@@ -38,21 +38,24 @@ class DataResponse {
 
 Future<DataResponse> request(Map<String, Object> urlConfig,
     {Map<String, dynamic> data}) async {
-  var useLog = urlConfig['is_logger'] ?? true;
-  useLog = true;
+  var _useLog = urlConfig['is_logger'] ?? true;
+  _useLog = true;
 
   /// Http method.
   String _method = urlConfig['req_type'] ?? "GET";
   _method = _method.toUpperCase();
-  if (useLog) print("http request method:$_method");
+  if (_useLog) print("http request method:$_method");
+
+  /// 路径
+  String _httpType = urlConfig['httpType'] ?? "https";
 
   /// 路径
   String _url = urlConfig['req_url'] ?? "";
 
   /// 请求基地址,可以包含子路径，如: "https://www.google.com/api/".
   String _baseUrl = urlConfig['Host'] ?? "";
-  String _path = "https://$_baseUrl$_url";
-  if (useLog) print("http request path:$_path");
+  String _path = "$_httpType://$_baseUrl$_url";
+  if (_useLog) print("http request path:$_path");
 
   /// Http请求头.
   Map<String, String> _headers = _createDefaultHeaders();
@@ -71,7 +74,7 @@ Future<DataResponse> request(Map<String, Object> urlConfig,
 
   /// 请求数据,可以是任意类型.
   var _data = data ?? {};
-  if (useLog) print("http request data:$_data");
+  if (_useLog) print("http request data:$_data");
 
   /// 请求的Content-Type，默认值是[ContentType.JSON].
   /// 如果您想以"application/x-www-form-urlencoded"格式编码请求数据,
@@ -88,7 +91,7 @@ Future<DataResponse> request(Map<String, Object> urlConfig,
   ///
   /// 如果想以文本(字符串)格式接收响应数据，请使用 `PLAIN`.
   var isJson = urlConfig["is_json"] ?? false;
-  ResponseType _responseType = isJson ? ResponseType.json : ResponseType.plain;
+  ResponseType _responseType = isJson ? ResponseType.json : ResponseType.stream;
 
   Options _options = new Options(
     method: _method,
@@ -106,8 +109,8 @@ Future<DataResponse> request(Map<String, Object> urlConfig,
         await dio.request(_path, data: _data, options: _options);
     // print(response);
     if (response.statusCode == 200 || response.statusCode == 303) {
-      if (useLog && isJson) {
-        print("http request response.data:${response.data}");
+      if (_useLog) {
+        print("http request response.data:${response.data.toString()}");
       }
       return DataResponse.data(response.data);
     } else {
