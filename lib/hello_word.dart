@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 
-import 'urls.dart';
+import './utils/urls.dart';
 
 /**
  * 配合安装 dart sdk , 方便调试

@@ -46,7 +46,7 @@ Future<DataResponse> request(Map<String, Object> urlConfig,
   _method = _method.toUpperCase();
   if (_useLog) print("http request method:$_method");
 
-  /// 路径
+  /// 类型
   String _httpType = urlConfig['httpType'] ?? "https";
 
   /// 路径
@@ -110,9 +110,9 @@ Future<DataResponse> request(Map<String, Object> urlConfig,
     // print(response);
     if (response.statusCode == 200 || response.statusCode == 303) {
       if (_useLog) {
-        print("http request response:${response}");
+        print("http request response:$response");
       }
-      return isJson ? DataResponse.data(response.data) : DataResponse.data(response);
+      return isJson ? DataResponse.data(response.data) : DataResponse.data(response.toString());
     } else {
       return DataResponse.error(10, "${response.statusMessage}");
     }

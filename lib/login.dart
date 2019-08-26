@@ -1,41 +1,60 @@
+import 'dart:convert';
+import 'dart:core';
 import 'dart:io';
 
-import 'package:dio/dio.dart';
-import 'http.dart' as HttpUtils;
-import 'urls.dart' as UrlUtils;
 import 'package:sprintf/sprintf.dart';
+import 'package:dio/dio.dart';
 
-import 'encode_util.dart';
+import './utils/http.dart' as HttpUtils;
+import './utils/urls.dart' as UrlUtils;
+
+import './utils/encode_util.dart' as EncodeUtil;
 
 void main(List<String> args) async {
   print("main start =================");
 
-  EncodeUtil.base642Image("sssssss.png", "");
+  // var file = await EncodeUtil.base64String2Image("sssssss.png", "");
 
-  // 先判断是否需要验证码
+  /// 先判断是否需要验证码 loginConf
   var needPassCode = await needLoginPassCode();
   if (needPassCode) {
-    // 获取验证码 getCodeImg1
+    /// 获取验证码 getCodeImg1
     var getCodeImg1 = UrlUtils.getUrlConfigMap('getCodeImg1');
     getCodeImg1['req_url'] =
         sprintf(getCodeImg1['req_url'], ["23456", "23456", "23456"]);
     var getCodeImg1Result = await HttpUtils.request(getCodeImg1);
-  //   print(getCodeImg1Result);
-  //   File file = new File("sss.png");
-  //   file.writeAsStringSync("test");
-  // 校验验证码 codeCheck1
-  // 验证账号和密码
-  // loginInitCdn1  cnd
-  // var loginInitCdn1 = UrlUtils.getUrlConfigMap('loginInitCdn1');
-  // var loginInitCdn1Result = await HttpUtils.request(loginInitCdn1);
-  // uamtk-static
-  // var uamtkStatic = UrlUtils.getUrlConfigMap('uamtk-static');
-  // var uamtkStaticData = {"appid": "otn"};
-  // var duamtkStaticResult = await HttpUtils.request(uamtkStatic, data: uamtkStaticData);
-  // var list = Future.wait([
-  //   HttpUtils.request(loginInitCdn1),
-  //   HttpUtils.request(uamtkStatic, data: uamtkStaticData)
-  // ]);
+
+    // print('getCodeImg1Result is:$getCodeImg1Result');
+
+    String base64String = getCodeImg1Result.data;
+    print('======================');
+    // print('base64String:$base64String');
+    var start = base64String.indexOf('(') + 1;
+    var end = base64String.lastIndexOf(')');
+    base64String = base64String.substring(start, end);
+    var base64Json = json.decode(base64String);
+    base64String = base64Json['image'];
+    print('======================');
+    print('base64String:$base64String');
+    var file = await EncodeUtil.base64String2Image("sssssss.png", base64String);
+    //   print(getCodeImg1Result);
+    //   File file = new File("sss.png");
+    //   file.writeAsStringSync("test");
+    // 校验验证码 codeCheck1
+    // 验证账号和密码
+    // loginInitCdn1  cnd
+    // var loginInitCdn1 = UrlUtils.getUrlConfigMap('loginInitCdn1');
+    // var loginInitCdn1Result = await HttpUtils.request(loginInitCdn1);
+    // uamtk-static
+    // var uamtkStatic = UrlUtils.getUrlConfigMap('uamtk-static');
+    // var uamtkStaticData = {"appid": "otn"};
+    // var duamtkStaticResult = await HttpUtils.request(uamtkStatic, data: uamtkStaticData);
+    // var list = Future.wait([
+    //   HttpUtils.request(loginInitCdn1),
+    //   HttpUtils.request(uamtkStatic, data: uamtkStaticData)
+    // ]);
+  } else {
+    /// 不需要验证码
   }
   print("main end =================");
 }
@@ -74,4 +93,8 @@ Future<bool> needLoginPassCode() async {
   }
   print('需要验证码');
   return true;
+}
+
+Future<File> getCaptchaImage() async {
+  var urlConfig = UrlUtils.getUrlConfigMap('getCodeImg1');
 }
