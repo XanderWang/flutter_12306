@@ -1,10 +1,16 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'http.dart' as HttpUtils;
 import 'urls.dart' as UrlUtils;
 import 'package:sprintf/sprintf.dart';
 
+import 'encode_util.dart';
+
 void main(List<String> args) async {
   print("main start =================");
+
+  EncodeUtil.base642Image("sssssss.png", "");
 
   // 先判断是否需要验证码
   var needPassCode = await needLoginPassCode();
@@ -14,20 +20,22 @@ void main(List<String> args) async {
     getCodeImg1['req_url'] =
         sprintf(getCodeImg1['req_url'], ["23456", "23456", "23456"]);
     var getCodeImg1Result = await HttpUtils.request(getCodeImg1);
-
-    // 校验验证码 codeCheck1
-    // 验证账号和密码
-    // loginInitCdn1  cnd
-    var loginInitCdn1 = UrlUtils.getUrlConfigMap('loginInitCdn1');
-    // var loginInitCdn1Result = await HttpUtils.request(loginInitCdn1);
-    // uamtk-static
-    var uamtkStatic = UrlUtils.getUrlConfigMap('uamtk-static');
-    var uamtkStaticData = {"appid": "otn"};
-    // var duamtkStaticResult = await HttpUtils.request(uamtkStatic, data: uamtkStaticData);
-    // var list = Future.wait([
-    //   HttpUtils.request(loginInitCdn1),
-    //   HttpUtils.request(uamtkStatic, data: uamtkStaticData)
-    // ]);
+  //   print(getCodeImg1Result);
+  //   File file = new File("sss.png");
+  //   file.writeAsStringSync("test");
+  // 校验验证码 codeCheck1
+  // 验证账号和密码
+  // loginInitCdn1  cnd
+  // var loginInitCdn1 = UrlUtils.getUrlConfigMap('loginInitCdn1');
+  // var loginInitCdn1Result = await HttpUtils.request(loginInitCdn1);
+  // uamtk-static
+  // var uamtkStatic = UrlUtils.getUrlConfigMap('uamtk-static');
+  // var uamtkStaticData = {"appid": "otn"};
+  // var duamtkStaticResult = await HttpUtils.request(uamtkStatic, data: uamtkStaticData);
+  // var list = Future.wait([
+  //   HttpUtils.request(loginInitCdn1),
+  //   HttpUtils.request(uamtkStatic, data: uamtkStaticData)
+  // ]);
   }
   print("main end =================");
 }

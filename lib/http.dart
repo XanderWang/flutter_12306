@@ -91,7 +91,7 @@ Future<DataResponse> request(Map<String, Object> urlConfig,
   ///
   /// 如果想以文本(字符串)格式接收响应数据，请使用 `PLAIN`.
   var isJson = urlConfig["is_json"] ?? false;
-  ResponseType _responseType = isJson ? ResponseType.json : ResponseType.stream;
+  ResponseType _responseType = isJson ? ResponseType.json : ResponseType.plain;
 
   Options _options = new Options(
     method: _method,
@@ -110,9 +110,9 @@ Future<DataResponse> request(Map<String, Object> urlConfig,
     // print(response);
     if (response.statusCode == 200 || response.statusCode == 303) {
       if (_useLog) {
-        print("http request response.data:${response.data.toString()}");
+        print("http request response:${response}");
       }
-      return DataResponse.data(response.data);
+      return isJson ? DataResponse.data(response.data) : DataResponse.data(response);
     } else {
       return DataResponse.error(10, "${response.statusMessage}");
     }
