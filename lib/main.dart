@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'todo_list.dart';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
+
+import './widget/login.dart';
+import './widget/todo_list.dart';
 
 void main() => runApp(new ToDoApp());
 
@@ -10,7 +12,7 @@ class ToDoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      title: 'My ToDo',
+      title: 'My 12306',
       theme: new ThemeData(
         // This is the theme of your application.
         //
@@ -22,7 +24,7 @@ class ToDoApp extends StatelessWidget {
         // counter didn't reset back to zero; the application is not restarted.
         primarySwatch: Colors.amber,
       ),
-      home: new HomePage(title: 'My Todo'),
+      home: new HomePage(title: 'My 12306'),
     );
   }
 }
@@ -49,7 +51,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  void getNet_3() async {
+  void _getNet_3() async {
     var url = 'https://wanandroid.com/wxarticle/chapters/json';
     Dio dio = new Dio();
     var response = await dio.get(url);
@@ -65,8 +67,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _insertTestData() {
-    _testNetwork();
-    getNet_3();
+//    _testNetwork();
+//    _getNet_3();
 
     ToDoBean toDoBean = ToDoBean();
     toDoBean.title = "test data";
@@ -99,7 +101,8 @@ class _HomePageState extends State<HomePage> {
       body: new Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        child: new ToDoListView(todoDatas: widget.todoDatas),
+        child: new LoginView()
+//        child: new ToDoListView(todoDatas: widget.todoDatas)
 //        child: new Column(
 //          // Column is also layout widget. It takes a list of children and
 //          // arranges them vertically. By default, it sizes itself to fit its

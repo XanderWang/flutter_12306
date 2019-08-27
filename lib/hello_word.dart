@@ -1,12 +1,7 @@
 import 'package:dio/dio.dart';
 
-import './utils/urls.dart';
-
-/**
- * 配合安装 dart sdk , 方便调试
- * dart sdk 可以在 flutter\bin\cache\dart-sdk\bin 下面找到
- */
-
+/// 配合安装 dart sdk , 方便调试
+/// dart sdk 可以在 flutter\bin\cache\dart-sdk\bin 下面找到
 void main() {
   // print("hello flutter");
   // print("你好啊");

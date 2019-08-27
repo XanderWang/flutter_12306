@@ -1,14 +1,43 @@
 /// 获取某个网络配置
 Map<String, dynamic> getUrlConfigMap(String key) {
   Map<String, dynamic> configMap = new Map();
-  var _configMap = _urls[key];
-  if (_configMap is Map) {
+  var _configMap = _new_urls[key];
+  if (_configMap != null && _configMap is Map) {
     _configMap.forEach((_key, _value) {
       configMap[_key] = _value;
     });
   }
   return configMap;
 }
+
+const _new_urls = {
+  "loginConf": {
+    // 登录接口2
+    "req_url": "/otn/login/conf",
+    "req_type": "post",
+    "Referer": "https://kyfw.12306.cn/otn/leftTicket/init",
+    "Host": "kyfw.12306.cn",
+    "re_try": 10,
+    "re_time": 0.3,
+    "s_time": 0.1,
+    "is_logger": true,
+    "is_json": true,
+  },
+  "captchaImage": {
+    // 登录验证码
+    "req_url":
+    "/passport/captcha/captcha-image64?login_site=E&module=login&rand=sjrand&%s&callback=jQuery19108016482864806321_%s&_=%s",
+    "req_type": "get",
+    "Referer": "https://kyfw.12306.cn/otn/resources/login.html",
+    "Host": "kyfw.12306.cn",
+    "Content-Type": 1,
+    "re_try": 10,
+    "re_time": 1,
+    "s_time": 0.1,
+    "is_logger": true,
+    "is_json": false,
+  },
+};
 
 /// 网络配置
 const _urls = {
