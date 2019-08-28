@@ -5,9 +5,9 @@ import 'package:dio/dio.dart';
 import './widget/login.dart';
 import './widget/todo_list.dart';
 
-void main() => runApp(new ToDoApp());
+void main() => runApp(new LoginApp());
 
-class ToDoApp extends StatelessWidget {
+class LoginApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -22,14 +22,14 @@ class ToDoApp extends StatelessWidget {
         // "hot reload" (press "r" in the console where you ran "flutter run",
         // or press Run > Flutter Hot Reload in IntelliJ). Notice that the
         // counter didn't reset back to zero; the application is not restarted.
-        primarySwatch: Colors.amber,
+        primarySwatch: Colors.green,
       ),
       home: new HomePage(title: 'My 12306'),
     );
   }
 }
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   HomePage({Key key, this.title}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -43,46 +43,8 @@ class HomePage extends StatefulWidget {
 
   final String title;
 
-  final todoDatas = <ToDoBean>[];
-
-  @override
-  _HomePageState createState() => new _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-
-  void _getNet_3() async {
-    var url = 'https://wanandroid.com/wxarticle/chapters/json';
-    Dio dio = new Dio();
-    var response = await dio.get(url);
-    print("getNet_3 $response.data.toString()");
-  }
-
-  void _testNetwork() {
-    print("==============================_test_network=====================================");
-    var url = 'https://wanandroid.com/wxarticle/chapters/json';
-    http.Client().get(url).then((http.Response response) {
-      print('Response=$response');
-    });
-  }
-
-  void _insertTestData() {
-//    _testNetwork();
-//    _getNet_3();
-
-    ToDoBean toDoBean = ToDoBean();
-    toDoBean.title = "test data";
-    toDoBean.hasDone = false;
-
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      widget.todoDatas.add(toDoBean);
-    });
-  }
+//  @override
+//  _HomePageState createState() => new _HomePageState();
 
   @override
   Widget build(BuildContext context) {
@@ -96,41 +58,16 @@ class _HomePageState extends State<HomePage> {
       appBar: new AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: new Text(widget.title),
+        title: new Text(title),
       ),
       body: new Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        child: new LoginView()
-//        child: new ToDoListView(todoDatas: widget.todoDatas)
-//        child: new Column(
-//          // Column is also layout widget. It takes a list of children and
-//          // arranges them vertically. By default, it sizes itself to fit its
-//          // children horizontally, and tries to be as tall as its parent.
-//          //
-//          // Invoke "debug paint" (press "p" in the console where you ran
-//          // "flutter run", or select "Toggle Debug Paint" from the Flutter tool
-//          // window in IntelliJ) to see the wireframe for each widget.
-//          //
-//          // Column has various properties to control how it sizes itself and
-//          // how it positions its children. Here we use mainAxisAlignment to
-//          // center the children vertically; the main axis here is the vertical
-//          // axis because Columns are vertical (the cross axis would be
-//          // horizontal).
-//          mainAxisAlignment: MainAxisAlignment.center,
-//          children: <Widget>[
-//            new Text(
-//              'You have pushed the button this many times:',
-//            ),
-//            new Text(
-//              '$_counter',
-//              style: Theme.of(context).textTheme.display1,
-//            ),
-//          ],
-//        ),
+          child: new LoginView(),
+//        child: new ToDoListView(todoDatas: widget.todoDatas),
       ),
       floatingActionButton: new FloatingActionButton(
-        onPressed: _insertTestData,
+        //onPressed: _insertTestData,
         tooltip: 'AddData',
         child: new Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.

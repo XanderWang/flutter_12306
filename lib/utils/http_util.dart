@@ -108,11 +108,11 @@ Future<DataResponse> request(Map<String, Object> urlConfig,
     _addInterceptor(dio);
     Response response =
         await dio.request(_path, data: _data, options: _options);
-    // print(response);
+    if (_useLog) {
+      print("$_path respone code:${response.statusCode}");
+      print("$_path response:${ isJson ? response.data : response}");
+    }
     if (response.statusCode == 200 || response.statusCode == 303) {
-      if (_useLog) {
-        print("http request response:$response");
-      }
       return isJson ? DataResponse.data(response.data) : DataResponse.data(response.toString());
     } else {
       return DataResponse.error(10, "${response.statusMessage}");
