@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'dart:async';
+import 'dart:convert';
+import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 
 class DataResponse {
@@ -36,6 +38,8 @@ class DataResponse {
     return "{success:$success,msg:$msg,code:$code,data:$data}";
   }
 }
+
+Dio _dio = new Dio();
 
 Future<DataResponse> request(Map<String, Object> urlConfig,
     {Map<String, dynamic> data}) async {
@@ -94,6 +98,8 @@ Future<DataResponse> request(Map<String, Object> urlConfig,
   var isJson = urlConfig["is_json"] ?? false;
   ResponseType _responseType = isJson ? ResponseType.json : ResponseType.plain;
 
+  var _saveCookies = urlConfig["save_cookies"] ?? false;
+
   Options _options = new Options(
     method: _method,
     connectTimeout: _connectTimeout,
@@ -103,17 +109,32 @@ Future<DataResponse> request(Map<String, Object> urlConfig,
     responseType: _responseType,
   );
 
+  if (!_cookies.isEmpty) {
+    _cookieJar.saveFromResponse(Uri.parse(_path), _cookies);
+  }
+
   try {
     Dio dio = Dio();
-    _addInterceptor(dio);
+//    Dio dio = _dio;
+    _addInterceptor(dio,useLog: _useLog);
     Response response =
         await dio.request(_path, data: _data, options: _options);
     if (_useLog) {
-      print("$_path respone code:${response.statusCode}");
-      print("$_path response:${ isJson ? response.data : response}");
+      print(
+          "******$_path respone cookies:${_cookieJar.loadForRequest(Uri.parse(_path))}");
+      print("******$_path respone statusCode:${response.statusCode}");
+//      print("$_path respone headers:${response.headers}");
+//      print("$_path respone request:${jsonEncode(response.headers)}");
+      print("******$_path response:${ isJson ? response.data : 'data'}");
+    }
+    if (_saveCookies) {
+//      _cookies.addAll(_cookieJar.loadForRequest(Uri.parse(_path)));
+      _cookies = _cookieJar.loadForRequest(Uri.parse(_path));
     }
     if (response.statusCode == 200 || response.statusCode == 303) {
-      return isJson ? DataResponse.data(response.data) : DataResponse.data(response.toString());
+      return isJson
+          ? DataResponse.data(response.data)
+          : DataResponse.data(response.toString());
     } else {
       return DataResponse.error(10, "${response.statusMessage}");
     }
@@ -134,21 +155,27 @@ Map<String, String> _createDefaultHeaders() {
   };
 }
 
-void _addInterceptor(Dio dio, {bool useLog = false}) {
+List<Cookie> _cookies = [];
+
+CookieJar _cookieJar = new CookieJar();
+
+CookieManager _cookieManager = CookieManager(_cookieJar);
+
+void _addInterceptor(Dio dio, {bool useLog = true}) {
+  dio.interceptors.add(_cookieManager);
   dio.interceptors.add(InterceptorsWrapper(onRequest: (RequestOptions options) {
     if (useLog) _printRequestOptions(options);
     return options;
   }, onResponse: (Response response) {
-    // response.statusCode = 404;
-    if (useLog) print("in response interceptors:${response.toString()}");
+//    if (useLog) print("in response interceptors:${response.toString()}");
     return response;
   }, onError: (DioError error) {
-    if (useLog) print("in requset interceptors:$error");
+    print("in requset interceptors:$error");
     return error;
   }));
 }
 
 void _printRequestOptions(RequestOptions options) {
-  // print("RequestOptions ${options.path},${options.cookies},${options.headers}");
-  print("RequestOptions ${options.path}");
+   print("RequestOptions path:${options.path} ,cookies${options.cookies},headers${options.headers}");
+//  print("RequestOptions ${options.path}");
 }

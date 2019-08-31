@@ -12,7 +12,7 @@ Map<String, dynamic> getUrlConfigMap(String key) {
 
 const _new_urls = {
   "loginConf": {
-    // 登录接口2
+    // 登录登录界面
     "req_url": "/otn/login/conf",
     "req_type": "post",
     "Referer": "https://kyfw.12306.cn/otn/leftTicket/init",
@@ -22,11 +22,12 @@ const _new_urls = {
     "s_time": 0.1,
     "is_logger": true,
     "is_json": true,
+    "save_cookies": true,
   },
   "captchaImage": {
-    // 登录验证码
+    // 获取登录验证码 时间 时间 时间
     "req_url":
-    "/passport/captcha/captcha-image64?login_site=E&module=login&rand=sjrand&%s&callback=jQuery19108016482864806321_%s&_=%s",
+        "/passport/captcha/captcha-image64?login_site=E&module=login&rand=sjrand&%s&callback=jQuery19108016482864806321_%s&_=%s",
     "req_type": "get",
     "Referer": "https://kyfw.12306.cn/otn/resources/login.html",
     "Host": "kyfw.12306.cn",
@@ -36,6 +37,66 @@ const _new_urls = {
     "s_time": 0.1,
     "is_logger": true,
     "is_json": false,
+    "save_cookies": true,
+  },
+  "checkCaptcha": {
+    // 验证码校验 时间 选择的图片 时间
+    // https://kyfw.12306.cn/passport/captcha/captcha-check?callback=jQuery19105982123199660495_1567223127101&answer=266%2C40%2C253%2C108&rand=sjrand&login_site=E&_=1567223127107
+    "req_url":
+        "/passport/captcha/captcha-check?callback=jQuery19108016482864806321_%s&answer=%s&rand=sjrand&login_site=E&_=%s",
+
+    "req_type": "get",
+    "Referer": "https://kyfw.12306.cn/otn/resources/login.html",
+    "Host": "kyfw.12306.cn",
+    "Content-Type": 1,
+    "re_try": 10,
+    "re_time": 1,
+    "s_time": 0.1,
+    "is_logger": true,
+    "is_json": false,
+  },
+  "login": {
+    // 检验用户名和密码 username password appid:otn
+    "req_url": "/passport/web/login",
+    "req_type": "post",
+    "Referer": "https://kyfw.12306.cn/otn/resources/login.html",
+    "Host": "kyfw.12306.cn",
+    "Content-Type": 1,
+    "re_try": 10,
+    "re_time": 1,
+    "s_time": 0.1,
+    "is_logger": true,
+    "is_json": true,
+    "save_cookies": true,
+  },
+  "auth": {
+    // 获取权限数据token（为下一步操作做准备） appin=otn
+    "req_url": "/passport/web/auth/uamtk",
+    "req_type": "post",
+    "Referer": "https://kyfw.12306.cn/otn/resources/login.html",
+    "Host": "kyfw.12306.cn",
+    "Content-Type": 1,
+    "re_try": 10,
+    "re_time": 1,
+    "s_time": 0.1,
+    "is_logger": true,
+    "is_json": true,
+    "save_cookies": true,
+  },
+  "uamauthclient": {
+    // 获取操作权限 'tk': token_res['newapptk']
+    "req_url": "/otn/uamauthclient",
+    "req_type": "post",
+    "Referer":
+    "https://kyfw.12306.cn/otn/passport?redirect=/otn/login/userLogin",
+    "Host": "kyfw.12306.cn",
+    "Content-Type": 1,
+    "re_try": 10,
+    "re_time": 1,
+    "s_time": 0.1,
+    "is_logger": true,
+    "is_json": true,
+    "save_cookies": true,
   },
 };
 
