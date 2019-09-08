@@ -39,15 +39,14 @@ class DataResponse {
   }
 }
 
-Dio _dio = new Dio();
-
 Future<DataResponse> request(Map<String, Object> urlConfig,
     {Map<String, dynamic> data}) async {
   var _useLog = urlConfig['is_logger'] ?? true;
   _useLog = true;
 
   /// Http method.
-  String _method = urlConfig['req_type'] ?? "GET";
+  ///String _method = urlConfig['req_type'] ?? "GET";
+  String _method = null == data ? "GET" : "POST";
   _method = _method.toUpperCase();
   if (_useLog) print("http request method:$_method");
 
@@ -65,9 +64,10 @@ Future<DataResponse> request(Map<String, Object> urlConfig,
   /// Http请求头.
   Map<String, String> _headers = _createDefaultHeaders();
   _headers["Referer"] = urlConfig["Referer"] ?? "";
-  // if( _method == "post" ) {
-  //   _headers.["Content-Length"] = "$data";
-  // }
+  _headers["Host"] = urlConfig["Host"] ?? "";
+  if (null != data) {
+    _headers["Content-Length"] = "${data.length}";
+  }
 
   /// 连接服务器超时时间，单位是毫秒.
   int _connectTimeout = 5000;
@@ -101,13 +101,13 @@ Future<DataResponse> request(Map<String, Object> urlConfig,
   var _saveCookies = urlConfig["save_cookies"] ?? false;
 
   Options _options = new Options(
-    method: _method,
-    connectTimeout: _connectTimeout,
-    receiveTimeout: _receiveTimeout,
-    headers: _headers,
-    contentType: _contentType,
-    responseType: _responseType,
-  );
+      method: _method,
+      connectTimeout: _connectTimeout,
+      receiveTimeout: _receiveTimeout,
+      headers: _headers,
+      contentType: _contentType,
+      responseType: _responseType,
+      followRedirects: false);
 
   if (!_cookies.isEmpty) {
     _cookieJar.saveFromResponse(Uri.parse(_path), _cookies);
@@ -115,17 +115,16 @@ Future<DataResponse> request(Map<String, Object> urlConfig,
 
   try {
     Dio dio = Dio();
-//    Dio dio = _dio;
-    _addInterceptor(dio,useLog: _useLog);
+    _addInterceptor(dio, useLog: _useLog);
     Response response =
         await dio.request(_path, data: _data, options: _options);
     if (_useLog) {
       print(
           "******$_path respone cookies:${_cookieJar.loadForRequest(Uri.parse(_path))}");
       print("******$_path respone statusCode:${response.statusCode}");
-//      print("$_path respone headers:${response.headers}");
-//      print("$_path respone request:${jsonEncode(response.headers)}");
-      print("******$_path response:${ isJson ? response.data : 'data'}");
+      //print("$_path respone headers:${response.headers}");
+      //print("$_path respone request:${jsonEncode(response.headers)}");
+      // print("******$_path response:${ isJson ? response.data : response}");
     }
     if (_saveCookies) {
 //      _cookies.addAll(_cookieJar.loadForRequest(Uri.parse(_path)));
@@ -161,13 +160,23 @@ CookieJar _cookieJar = new CookieJar();
 
 CookieManager _cookieManager = CookieManager(_cookieJar);
 
-void _addInterceptor(Dio dio, {bool useLog = true}) {
+
+void setDevicesId(String devicesId) {
+  /// RAIL_DEVICEID
+  if( null == devicesId || "" == devicesId ) {
+    return;
+  }
+  Cookie cookie = new Cookie('RAIL_DEVICEID', devicesId);
+  _cookies.add(cookie);
+}
+
+void _addInterceptor(Dio dio, {bool useLog = false}) {
   dio.interceptors.add(_cookieManager);
   dio.interceptors.add(InterceptorsWrapper(onRequest: (RequestOptions options) {
     if (useLog) _printRequestOptions(options);
     return options;
   }, onResponse: (Response response) {
-//    if (useLog) print("in response interceptors:${response.toString()}");
+    //if (useLog) print("in response interceptors:${response.toString()}");
     return response;
   }, onError: (DioError error) {
     print("in requset interceptors:$error");
@@ -176,6 +185,7 @@ void _addInterceptor(Dio dio, {bool useLog = true}) {
 }
 
 void _printRequestOptions(RequestOptions options) {
-   print("RequestOptions path:${options.path} ,cookies${options.cookies},headers${options.headers}");
+  print(
+      "-------RequestOptions path:${options.path} \n-------cookies${options.cookies} \n-------headers${options.headers}");
 //  print("RequestOptions ${options.path}");
 }

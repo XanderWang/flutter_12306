@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:event_bus/event_bus.dart';
 
 import './../utils/login_util.dart' as LoginUtil;
+import './../utils/http_util.dart' as HttpUtil;
 
 // 点的位置
 final _captchaPoints = [
@@ -98,7 +99,8 @@ class LoginView extends StatelessWidget {
     print("CaptchaPointsString:${_getCaptchaPointsString()}");
     LoginUtil.checkCaptcha(_captchaAswer).then((checkSuccess) {
       if (checkSuccess) {
-        LoginUtil.login(_userName, _password);
+        // LoginUtil.login(_userName, _password);
+        LoginUtil.baseLogin(_userName, _password,_captchaAswer);
       } else {
         _eventBus.fire(new _CaptchaEvent(true));
       }
@@ -161,6 +163,7 @@ class _LoginCaptchaState extends State<LoginCaptchaView> {
 
   /// 构造方法，监听验证码校验结果
   _LoginCaptchaState() {
+    print("login.dart-_LoginCaptchaState-_LoginCaptchaState:");
     _eventBus.on<_CaptchaEvent>().listen(_captchaListener);
   }
 
@@ -205,6 +208,11 @@ class _LoginCaptchaState extends State<LoginCaptchaView> {
     print("login.dart-_LoginCaptchaState-_getCaptchaImage:");
     var needPassCode = await LoginUtil.initLoginConf();
     if (needPassCode) {
+      /// 请求授权
+      var auth = await LoginUtil.doAuth();
+      /// 获取 devicesId
+      String devicesId = await LoginUtil.getDevicesId();
+      HttpUtil.setDevicesId(devicesId);
       /// 获取验证码 captcha
       return await LoginUtil.getCaptchaBase64String();
     } else {
