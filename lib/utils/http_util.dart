@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
 import 'package:cookie_jar/cookie_jar.dart';
+import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:dio/dio.dart';
 
 class DataResponse {
@@ -88,6 +89,8 @@ Future<DataResponse> request(Map<String, Object> urlConfig,
   ContentType _contentType =
       ContentType.parse("application/x-www-form-urlencoded");
 
+  String __contentType = "application/x-www-form-urlencoded";
+
   /// [responseType] 表示期望以那种格式(方式)接受响应数据。
   /// 目前 [ResponseType] 接受三种类型 `JSON`, `STREAM`, `PLAIN`.
   ///
@@ -102,10 +105,10 @@ Future<DataResponse> request(Map<String, Object> urlConfig,
 
   Options _options = new Options(
       method: _method,
-      connectTimeout: _connectTimeout,
+      sendTimeout: _connectTimeout,
       receiveTimeout: _receiveTimeout,
       headers: _headers,
-      contentType: _contentType,
+      contentType: __contentType,
       responseType: _responseType,
       followRedirects: false);
 
@@ -156,9 +159,11 @@ Map<String, String> _createDefaultHeaders() {
 
 List<Cookie> _cookies = [];
 
-CookieJar _cookieJar = new CookieJar();
+//CookieJar _cookieJar = new CookieJar();
+PersistCookieJar _cookieJar = new PersistCookieJar();
 
 CookieManager _cookieManager = CookieManager(_cookieJar);
+//SerializableCookie
 
 
 void setDevicesId(String devicesId) {
@@ -186,6 +191,6 @@ void _addInterceptor(Dio dio, {bool useLog = false}) {
 
 void _printRequestOptions(RequestOptions options) {
   print(
-      "-------RequestOptions path:${options.path} \n-------cookies${options.cookies} \n-------headers${options.headers}");
+      "-------RequestOptions path:${options.path} \n-------cookies:${options} \n-------headers${options.headers}");
 //  print("RequestOptions ${options.path}");
 }
