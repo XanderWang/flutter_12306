@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 
 /// 配合安装 dart sdk , 方便调试
@@ -10,11 +13,13 @@ void main() {
   // print(TestA.forX(33));
   // print(TestA.forY());
   // outter(print_msg);
-  // getNet_3();
+//   getNet_3();
+  var line = stdin.readLineSync(encoding: Encoding.getByName('utf-8'));
+  print("read line:$line");
 
 }
 
-outter(inner(String inner_msg)) {
+outer(inner(String inner_msg)) {
   print("now in outter");
   inner("I am value in out.");
 }

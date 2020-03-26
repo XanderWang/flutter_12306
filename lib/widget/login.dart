@@ -66,12 +66,13 @@ class _CaptchaSelectedEvent {
 double _captchaWidth = 0;
 
 /// 验证码的高
-double _captchaHegiht = 0;
+double _captchaHeight = 0;
 
 double _captchaRaitoWidth(double pixe) {
   return pixe * _captchaWidth / 360;
 }
 
+// ignore: must_be_immutable
 class LoginView extends StatelessWidget {
   String _userName = "";
   String _password = "";
@@ -111,7 +112,7 @@ class LoginView extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
       _captchaWidth = constraints.maxWidth;
-      _captchaHegiht = _captchaWidth * 220 / 360;
+      _captchaHeight = _captchaWidth * 220 / 360;
       return Center(
           child: Card(
         elevation: 3,
@@ -157,7 +158,7 @@ class LoginCaptchaView extends StatefulWidget {
 }
 
 class _LoginCaptchaState extends State<LoginCaptchaView> {
-  Uint8List _imgData = null;
+  Uint8List _imgData;
   bool _needRefreshCaptcha = true;
   bool _isLoading = false;
 
@@ -229,7 +230,7 @@ class _LoginCaptchaState extends State<LoginCaptchaView> {
   @override
   Widget build(BuildContext context) {
     print(
-        "login.dart-_LoginCaptchaState-build:{$_captchaWidth,$_captchaHegiht}");
+        "login.dart-_LoginCaptchaState-build:{$_captchaWidth,$_captchaHeight}");
     // 刷新按钮，说着说重试按钮，防止有时候图片刷不出来
     // 显示验证码
     // 选择验证码
@@ -239,7 +240,7 @@ class _LoginCaptchaState extends State<LoginCaptchaView> {
         child: Container(
           color: Color.fromARGB(1, 1, 1, 1),
           width: _captchaWidth,
-          height: _captchaHegiht,
+          height: _captchaHeight,
           alignment: AlignmentDirectional.center,
           child: Text(_isLoading ? "加载中..." : "点击加载验证码！！！"),
         )));
@@ -248,7 +249,7 @@ class _LoginCaptchaState extends State<LoginCaptchaView> {
       stackList.add(Image.memory(
         _imgData,
         width: _captchaWidth,
-        height: _captchaHegiht,
+        height: _captchaHeight,
         fit: BoxFit.fill,
       ));
 
@@ -258,7 +259,7 @@ class _LoginCaptchaState extends State<LoginCaptchaView> {
       stackList.add(Container(
         alignment: AlignmentDirectional.center,
         width: _captchaWidth - _paddingOther,
-        height: _captchaHegiht - _paddingTop - _paddingOther,
+        height: _captchaHeight - _paddingTop - _paddingOther,
         margin: EdgeInsets.fromLTRB(
             _paddingOther, _paddingTop, _paddingOther, _paddingOther),
         child: _CaptchaGridView(),
@@ -267,7 +268,7 @@ class _LoginCaptchaState extends State<LoginCaptchaView> {
       stackList.add(Container(
         alignment: AlignmentDirectional.topEnd,
         width: _captchaWidth,
-        height: _captchaHegiht,
+        height: _captchaHeight,
         child: GestureDetector(
           onTap: _refreshCaptcha,
           child: Container(
@@ -286,7 +287,7 @@ class _LoginCaptchaState extends State<LoginCaptchaView> {
 
     return ConstrainedBox(
       constraints:
-          BoxConstraints.expand(width: _captchaWidth, height: _captchaHegiht),
+          BoxConstraints.expand(width: _captchaWidth, height: _captchaHeight),
       child: Stack(
         alignment: AlignmentDirectional.center,
         fit: StackFit.expand,

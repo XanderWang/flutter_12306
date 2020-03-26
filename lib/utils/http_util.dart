@@ -89,7 +89,7 @@ Future<DataResponse> request(Map<String, Object> urlConfig,
   ContentType _contentType =
       ContentType.parse("application/x-www-form-urlencoded");
 
-  String __contentType = "application/x-www-form-urlencoded";
+  String _contentTypeStr = "application/x-www-form-urlencoded";
 
   /// [responseType] 表示期望以那种格式(方式)接受响应数据。
   /// 目前 [ResponseType] 接受三种类型 `JSON`, `STREAM`, `PLAIN`.
@@ -108,11 +108,15 @@ Future<DataResponse> request(Map<String, Object> urlConfig,
       sendTimeout: _connectTimeout,
       receiveTimeout: _receiveTimeout,
       headers: _headers,
-      contentType: __contentType,
+      contentType: _contentTypeStr,
       responseType: _responseType,
-      followRedirects: false);
+      followRedirects: true,
+      validateStatus: (status) {
+        return status < 400;
+      }
+  );
 
-  if (!_cookies.isEmpty) {
+  if (_cookies.isNotEmpty) {
     _cookieJar.saveFromResponse(Uri.parse(_path), _cookies);
   }
 
@@ -122,18 +126,17 @@ Future<DataResponse> request(Map<String, Object> urlConfig,
     Response response =
         await dio.request(_path, data: _data, options: _options);
     if (_useLog) {
-      print(
-          "******$_path respone cookies:${_cookieJar.loadForRequest(Uri.parse(_path))}");
+      print("******$_path respone cookies:${_cookieJar.loadForRequest(Uri.parse(_path))}");
       print("******$_path respone statusCode:${response.statusCode}");
       //print("$_path respone headers:${response.headers}");
       //print("$_path respone request:${jsonEncode(response.headers)}");
-      // print("******$_path response:${ isJson ? response.data : response}");
+       print("******$_path response:${ isJson ? response.data : response}");
     }
     if (_saveCookies) {
 //      _cookies.addAll(_cookieJar.loadForRequest(Uri.parse(_path)));
       _cookies = _cookieJar.loadForRequest(Uri.parse(_path));
     }
-    if (response.statusCode == 200 || response.statusCode == 303) {
+    if (response.statusCode == 200 || response.statusCode == 302) {
       return isJson
           ? DataResponse.data(response.data)
           : DataResponse.data(response.toString());
@@ -141,7 +144,7 @@ Future<DataResponse> request(Map<String, Object> urlConfig,
       return DataResponse.error(10, "${response.statusMessage}");
     }
   } on DioError catch (e) {
-    print(e);
+    print("http error:$e");
     return DataResponse.error(10, "${e.message}");
   }
 }
@@ -163,7 +166,6 @@ List<Cookie> _cookies = [];
 PersistCookieJar _cookieJar = new PersistCookieJar();
 
 CookieManager _cookieManager = CookieManager(_cookieJar);
-//SerializableCookie
 
 
 void setDevicesId(String devicesId) {
@@ -175,8 +177,10 @@ void setDevicesId(String devicesId) {
   _cookies.add(cookie);
 }
 
-void _addInterceptor(Dio dio, {bool useLog = false}) {
-  dio.interceptors.add(_cookieManager);
+void _addInterceptor(Dio dio, {bool useCookie = true, bool useLog = false}) {
+  if (useCookie) {
+    dio.interceptors.add(_cookieManager);
+  }
   dio.interceptors.add(InterceptorsWrapper(onRequest: (RequestOptions options) {
     if (useLog) _printRequestOptions(options);
     return options;
@@ -190,7 +194,7 @@ void _addInterceptor(Dio dio, {bool useLog = false}) {
 }
 
 void _printRequestOptions(RequestOptions options) {
-  print(
-      "-------RequestOptions path:${options.path} \n-------cookies:${options} \n-------headers${options.headers}");
+  print("-------RequestOptions path:${options.path}");
+  print("-------headers${options.headers}");
 //  print("RequestOptions ${options.path}");
 }

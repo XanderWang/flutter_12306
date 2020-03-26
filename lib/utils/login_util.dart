@@ -31,9 +31,13 @@ void main(List<String> args) async {
     String devicesId = await getDevicesId();
     HttpUtil.setDevicesId(devicesId);
     /// 获取验证码 captcha
-    /// var captchaImage = await getCaptchaImage();
-    /// var checkResult = checkCaptcha("43,45,106,45");
-    /// checkCaptcha("266%2C40%2C253%2C108");
+    var captchaImage = await getCaptchaImage();
+    print("请输入坐标：");
+    var line = stdin.readLineSync(encoding: Encoding.getByName('utf-8'));
+    print("read line:$line");
+    var checkResult = checkCaptcha(line);
+//    var checkResult = checkCaptcha("43,45,106,45");
+//    checkCaptcha("266%2C40%2C253%2C108");
   } else {
     /// 不需要验证码
   }
@@ -64,30 +68,33 @@ Future doAuth() async {
   var loginInitCdn1 = UrlUtil.getUrlConfigMap('loginInitCdn1');
   print("doAuth loginInitCdn1:$loginInitCdn1");
   var loginInitCdn1Result = await HttpUtil.request(loginInitCdn1);
-  var uamtk_static = UrlUtil.getUrlConfigMap('uamtk-static');
-  print("doAuth uamtk_static:$uamtk_static");
-  var uamtk_static_data = {"appid": "otn"};
-  var uamtk_staticResult =
-      await HttpUtil.request(uamtk_static, data: uamtk_static_data);
-  return uamtk_staticResult;
+  var uamtkStatic = UrlUtil.getUrlConfigMap('uamtk-static');
+  print("doAuth uamtk_static:$uamtkStatic");
+  var uamtkStaticData = {"appid": "otn"};
+  var uamtkStaticResult =
+      await HttpUtil.request(uamtkStatic, data: uamtkStaticData);
+  return uamtkStaticResult;
 }
 
 Future<String> getDevicesId() async {
   var devicesIdConf = UrlUtil.getUrlConfigMap('getDevicesId');
-  var date = DateTime.now().millisecondsSinceEpoch;
-  devicesIdConf['req_url'] = sprintf(devicesIdConf['req_url'], [date]);
-  print("getDevicesId devicesIdConf:$devicesIdConf");
+//  print("devicesIdConf:$devicesIdConf");
+  var dateTime = DateTime.now().millisecondsSinceEpoch;
+//  devicesIdConf['req_url'] = sprintf(devicesIdConf['req_url'], [dateTime]);
+  devicesIdConf['req_url'] = devicesIdConf['req_url'] + dateTime.toString();
+//  print("getDevicesId devicesIdConf:$devicesIdConf");
   var devicesIdResult = await HttpUtil.request(devicesIdConf);
   print("devicesIdResult:$devicesIdResult");
   String devicesId = "";
   if( devicesIdResult.success ) {
     String devicesString = devicesIdResult.data;
-    var start = devicesString.indexOf('(') + 1;
-    var end = devicesString.lastIndexOf(')');
+    var start = devicesString.indexOf('(') + 2;
+    var end = devicesString.lastIndexOf(')') - 1;
     devicesString = devicesString.substring(start, end);
     var deviceJson = json.decode(devicesString);
     devicesId = deviceJson['dfp'];
   }
+  print("getDevicesId devicesId:$devicesId");
   return devicesId;
 }
 
@@ -112,9 +119,11 @@ Future<String> getCaptchaBase64String() async {
   var captchaImageResult = await HttpUtil.request(captchaImage);
   if (captchaImageResult.success) {
     String base64String = captchaImageResult.data;
+    print("getCaptchaBase64String base64String:$base64String");
     var start = base64String.indexOf('(') + 1;
     var end = base64String.lastIndexOf(')');
     base64String = base64String.substring(start, end);
+    print("getCaptchaBase64String base64String:$base64String");
     var base64Json = json.decode(base64String);
     base64String = base64Json['image'];
     return base64String;

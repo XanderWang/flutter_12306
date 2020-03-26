@@ -46,3 +46,5 @@ app.*.symbols
 **/.settings
 **/.project
 **/.classpath
+/.flutter-plugins-dependencies
+/.cookies/
